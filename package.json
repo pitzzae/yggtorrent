@@ -1,6 +1,6 @@
 {
   "name": "yggtorrent",
-  "version": "1.0.1",
+  "version": "1.0.1-a",
   "description": "Web crawler to use as API",
   "main": "index.js",
   "scripts": {
