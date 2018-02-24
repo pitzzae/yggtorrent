@@ -73,6 +73,33 @@ Client.prototype.get = function(action, query, callback)
 	}
 };
 
+Client.prototype.get_categories = function(callback)
+{
+	this.get('get_categories', '', callback);
+}
+
+Client.prototype.get_nfo = function(callback, id)
+{
+	this.get('get_nfo', 'torrent_id=' + id, callback);
+}
+
+Client.prototype.get_info = function(callback, id)
+{
+	this.get('get_info', id, callback);
+}
+
+Client.prototype.search = function(callback, search, category, subcategory)
+{
+	var category_tmp = category ? category : 'all';
+	var subcategory_tmp = subcategory ? subcategory : 'all';
+	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&q=' + search, callback);
+}
+
+Client.prototype.get_torrent = function(callback, id)
+{
+	this.get('get_torrent', 'id=' + id, callback);
+}
+
 function fetch_url(action, query, parsing, auth, callback)
 {
 	var headers = {
