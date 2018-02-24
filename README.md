@@ -459,43 +459,107 @@ client.get_torrent(function(buf) {
 ```
 ```json
 {
-   info:{
-      length:2988590591,
-      name:<Buffer 30 31 37 20 ...>,
-      'piece length':2097152,
-      pieces:<Buffer 30 31 37 20 ...>,
-      private:1
-   },
-   infoBuffer:<Buffer 30 31 37 20 ...>,
-   infoHash:'2bc14835e2300ae92ed3cd885347f42f220b5cb',
-   infoHashBuffer:<Buffer 0d 8e d2 99 ec 01 ...>,
-   name:'Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi',
-   private:true,
-   created:2018-02-24T17:51:06.000Z,
-   createdBy:'Torrent RW PHP Class - http://github.com/adriengibrat/torrent-rw',
-   announce:[
-      'http://jack.yggtorrent.com:8080/28675e1d26e926d99815d9bc7ac195132b3cfea9/announce'
-   ],
-   urlList:[
-
-   ],
-   files:[
+  "info": {
+    "file-duration": [
+      7294
+    ],
+    "file-media": [
+      0
+    ],
+    "length": 1497447860,
+    "name": {
+      "type": "Buffer",
+      "data": [
+        86,
+        34,
+        23,
+        65,
+        87,
+        123
+      ]
+    },
+    "piece length": 2097152,
+    "pieces": {
+      "type": "Buffer",
+      "data": [
+        45,
+        178,
+        27,
+        47,
+        117
+      ]
+    },
+    "private": 1,
+    "profiles": [
       {
-         path:'Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi',
-         name:'Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi',
-         length:1497447860,
-         offset:0
+        "acodec": {
+          "type": "Buffer",
+          "data": [
+            87,
+            254,
+            34
+          ]
+        },
+        "height": 302,
+        "vcodec": {
+          "type": "Buffer",
+          "data": [
+            67,
+            167
+            36,
+            48
+          ]
+        },
+        "width": 720
       }
-   ],
-   length:1497447860,
-   pieceLength:2097152,
-   lastPieceLength:81332,
-   pieces:[
-      '44d0672d5fc710d0d6138b4725b64eb8fe9d3c37',
-      '2bc14835e2300ae92ed3cd885347f42f220b5cb4',
-      '618546f4135188b46d4526c67bec0399ab05d66e',
-      '4da6c7a9304abc41cd4256c731718572b6ca400d',
-      ... 1326 more items
-   ]
+    ]
+  },
+  "infoBuffer": {
+    "type": "Buffer",
+    "data": [
+      56,
+      67,
+      87,
+      14,
+      231,
+      56
+    ]
+  },
+  "infoHash": "85c1459abd2647aa68095ecdf4a87081",
+  "infoHashBuffer": {
+    "type": "Buffer",
+    "data": [
+      56,
+      76,
+      121,
+      23
+    ]
+  },
+  "name": "Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi",
+  "private": true,
+  "created": "2018-02-24T17:59:05.000Z",
+  "createdBy": "Torrent RW PHP Class - http://github.com/adriengibrat/torrent-rw",
+  "announce": [
+    "http://jack.yggtorrent.com:8080/<empty-key>/announce"
+  ],
+  "urlList": [],
+  "files": [
+    {
+      "path": "Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi",
+      "name": "Interstellar.2014.TRUEFRENCH.BRRip.XviD-Slay3R.avi",
+      "length": 1497447860,
+      "offset": 0
+    }
+  ],
+  "length": 1497447860,
+  "pieceLength": 2097152,
+  "lastPieceLength": 81332,
+  "pieces": [
+    "b7aa36ecd8a6e4d54ff657703bd2d041f21d3918",
+    "f8f7ff1f937a699c79542766f2619bc4fd1eca73",
+    "177db4e3b8a052fd6705e15984c8fbbfd19891d9",
+    "8d4ad06dee51b5a83f41472a316a4f6775f9225f",
+    "0f03da9db582cb680441776e84890980944fa40f"
+  ]
 }
 ```
