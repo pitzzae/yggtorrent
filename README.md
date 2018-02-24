@@ -24,22 +24,22 @@ client.set_credential('your-username', 'your-password');
 // list categories
 client.get_categories(function(result) {
 	console.log(result);
-}));
+});
 
 // get nfo as text file
 client.get_nfo(function(result) {
 	console.log(result);
-}), id);
+}, id);
 
 // get description as htlm format
 client.get_info(function(result) {
 	console.log(result);
-}), id);
+}, id);
 
 // search torrents
 client.search(function(result) {
 	console.log(result);
-}), 'interstellar');
+}, 'interstellar');
 
 // download and parse a .torrent
 client.get_torrent(function(buf) {
