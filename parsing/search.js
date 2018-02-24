@@ -7,11 +7,7 @@ function get_data_on_line(data)
 		torrent: "",
 		id: null,
 		age: "",
-		ratio: 0,
-		upload: 0,
-		total: 0,
 		size: "",
-		p: 0,
 		s: "",
 		l: ""
 	}
@@ -24,7 +20,7 @@ function get_data_on_line(data)
 				//Get torrent name
 				if (data[i].children[j].name == 'a' &&
 					data[i].children[j].attribs.class == 'torrent-name')
-					data_extract.torrent = data[i].children[j].children[0].data;
+					data_extract.torrent = data[i].children[j].children[0].data.trim();
 				//Get torrent type
 				if (data[i].children[j].name == 'span' &&
 					data[i].children[j].children[5].name == 'i' &&
@@ -40,7 +36,7 @@ function get_data_on_line(data)
 				//Get torrent Age
 				if (data[i].children[j].name == 'i' &&
 					data[i].children.length == 2)
-					data_extract.age = data[i].children[1].data.replace('\n', '');
+					data_extract.age = data[i].children[1].data.replace('\n', '').trim();
 				//Get torrent size
 				if (data[i].children[j].type == 'text' && i == 7)
 					data_extract.size = data[i].children[j].data;
