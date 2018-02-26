@@ -300,7 +300,7 @@ client.get_categories(console.log);
 Nfo Output
 -----
 ```javascript
-client.get_categories(console.log, '185378');
+client.get_nfo(console.log, '185378');
 ```
 ```text
 GÃ©nÃ©ral
