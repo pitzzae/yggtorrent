@@ -92,7 +92,7 @@ Client.prototype.search = function(callback, search, category, subcategory)
 {
 	var category_tmp = category ? category : 'all';
 	var subcategory_tmp = subcategory ? subcategory : 'all';
-	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&q=' + search, callback);
+	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&q=' + encodeURIComponent(search), callback);
 }
 
 Client.prototype.get_torrent = function(callback, id)
