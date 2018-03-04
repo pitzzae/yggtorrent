@@ -41,6 +41,24 @@ client.search(function(result) {
 	console.log(result);
 }, 'interstellar');
 
+// search popular torrents by categorie
+client.get_popular(function(result) {
+	//same output than search
+	console.log(result);
+}, "2145"); //categories FilmVidéo
+
+// search yesterday torrents by categorie
+client.get_yesterday(function(result) {
+	//same output than search
+	console.log(result);
+}, "2145"); //categories FilmVidéo
+
+// search today torrents by categorie
+client.get_today(function(result) {
+	//same output than search
+	console.log(result);
+}, "2145"); //categories FilmVidéo
+
 // download and parse a .torrent
 client.get_torrent(function(buf) {
 	// `buf` is a Buffer

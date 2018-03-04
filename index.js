@@ -25,6 +25,24 @@ const uri_action = {
 		parsing: require('./parsing/search').search,
 		query_params: true
 	},
+	get_popular: {
+		method: 'GET',
+		path: '/torrents/popular?',
+		parsing: require('./parsing/search').search,
+		query_params: true
+	},
+	get_yesterday: {
+		method: 'GET',
+		path: '/torrents/yesterday?',
+		parsing: require('./parsing/search').search,
+		query_params: true
+	},
+	get_today: {
+		method: 'GET',
+		path: '/torrents/today?',
+		parsing: require('./parsing/search').search,
+		query_params: true
+	},
 	get_nfo: {
 		method: 'POST',
 		path: '/engine/get_nfo',
@@ -93,6 +111,21 @@ Client.prototype.search = function(callback, search, category, subcategory)
 	var category_tmp = category ? category : 'all';
 	var subcategory_tmp = subcategory ? subcategory : 'all';
 	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&q=' + encodeURIComponent(search), callback);
+}
+
+Client.prototype.get_popular = function(callback, id)
+{
+	this.get('get_popular', 'category=' + id + '&per_page=100', callback);
+}
+
+Client.prototype.get_yesterday = function(callback, id)
+{
+	this.get('get_yesterday', 'category=' + id  + '&per_page=100', callback);
+}
+
+Client.prototype.get_today = function(callback, id)
+{
+	this.get('get_today', 'category=' + id + '&per_page=100', callback);
 }
 
 Client.prototype.get_torrent = function(callback, id)
