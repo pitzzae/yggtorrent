@@ -1,5 +1,5 @@
 const https = require('https');
-const API_HOST = 'yggtorrent.com';
+const API_HOST = 'yggtorrent.is';
 const uri_action = {
 	get_categories: {
 		method: 'GET',
@@ -25,29 +25,11 @@ const uri_action = {
 		parsing: require('./parsing/search').search,
 		query_params: true
 	},
-	get_popular: {
-		method: 'GET',
-		path: '/torrents/popular?',
-		parsing: require('./parsing/search').search,
-		query_params: true
-	},
-	get_yesterday: {
-		method: 'GET',
-		path: '/torrents/yesterday?',
-		parsing: require('./parsing/search').search,
-		query_params: true
-	},
-	get_today: {
-		method: 'GET',
-		path: '/torrents/today?',
-		parsing: require('./parsing/search').search,
-		query_params: true
-	},
 	get_nfo: {
 		method: 'POST',
-		path: '/engine/get_nfo',
+		path: '/engine/get_nfo?',
 		parsing: require('./parsing/get_nfo').get_nfo,
-		query_params: false
+		query_params: true
 	},
 	auth: {
 		method: 'POST',
@@ -69,6 +51,7 @@ Client.prototype.set_credential = function(user, password)
 	fetch_url.credential = {
 		user: user,
 		password: password,
+		count: 0
 	};
 }
 
@@ -98,19 +81,19 @@ Client.prototype.get_categories = function(callback)
 
 Client.prototype.get_nfo = function(callback, id)
 {
-	this.get('get_nfo', 'torrent_id=' + id, callback);
+	this.get('get_nfo', 'torrent=' + id, callback);
 }
 
 Client.prototype.get_info = function(callback, id)
 {
-	this.get('get_info', id, callback);
+	this.get('get_info', id + '-x', callback);
 }
 
 Client.prototype.search = function(callback, search, category, subcategory)
 {
 	var category_tmp = category ? category : 'all';
 	var subcategory_tmp = subcategory ? subcategory : 'all';
-	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&q=' + encodeURIComponent(search), callback);
+	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&do=search&name=' + encodeURIComponent(search), callback);
 }
 
 Client.prototype.get_popular = function(callback, id)

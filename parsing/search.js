@@ -6,6 +6,7 @@ function get_data_on_line(data)
 		type: "",
 		torrent: "",
 		id: null,
+		compl: "",
 		age: "",
 		size: "",
 		s: "",
@@ -15,38 +16,69 @@ function get_data_on_line(data)
 	{
 		if (data[i].name == "td")
 		{
-			for (var j = 0; j < data[i].children.length; j++)
-			{
-				//Get torrent name
-				if (data[i].children[j].name == 'a' &&
-					data[i].children[j].attribs.class == 'torrent-name')
-					data_extract.torrent = data[i].children[j].children[0].data.trim();
-				//Get torrent type
-				if (data[i].children[j].name == 'span' &&
-					data[i].children[j].children[5].name == 'i' &&
-					data[i].children[j].children[5].children[0].name == 'a' &&
-					data[i].children[j].children[5].children[0].children[0])
-					data_extract.type = data[i].children[j].children[5].children[0].children[0].data;
-				//Get torrent id
-				if (data[i].children[j].name == 'a' &&
-					data[i].children[j].attribs &&
-					data[i].children[j].attribs.id == 'get_nfo' &&
-					data[i].children[j].attribs.target)
-					data_extract.id = data[i].children[j].attribs.target;
-				//Get torrent Age
-				if (data[i].children[j].name == 'i' &&
-					data[i].children.length == 2)
-					data_extract.age = data[i].children[1].data.replace('\n', '').trim();
-				//Get torrent size
-				if (data[i].children[j].type == 'text' && i == 7)
-					data_extract.size = data[i].children[j].data;
-				//Get torrent seed
-				if (data[i].children[j].type == 'text' && i == 9)
-					data_extract.s = data[i].children[j].data;
-				//Get torrent leech
-				if (data[i].children[j].type == 'text' && i == 11)
-					data_extract.l = data[i].children[j].data;
-			}
+			//Get torrent type
+			if (data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].name == 'div' &&
+				data[i].children[0].children && 
+				data[i].children[0].attribs &&
+				data[i].children[0].attribs.class == 'hidden' &&
+				data[i].children[0].children[0] &&
+				data[i].children[0].children[0].type == 'text' &&
+				data[i].children[0].next &&
+				data[i].children[0].next.name == 'a')
+				data_extract.type = data[i].children[0].children[0].data;
+			//Get torrent name
+			if (data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].name == 'a' &&
+				data[i].children[0].children &&
+				data[i].children[0].children[0] &&
+				data[i].children[0].children[0].type == 'text')
+				data_extract.torrent = data[i].children[0].children[0].data.replace(/\n/g, '').trim();
+			//Get torrent id
+			if (data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].name == 'a' &&
+				data[i].children[0].children &&
+				data[i].children[0].children[0] &&
+				data[i].children[0].children[0].name == 'img')
+				data_extract.id = data[i].children[0].children[0].parent.attribs.target;
+			//Get torrent Age
+			if (data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].name == 'div' &&
+				data[i].children[1].name == 'span' &&
+				data[i].children[2].type == 'text')
+				data_extract.age = data[i].children[2].data.trim();
+			//Get torrent size
+			if (data[i] && i == 11 && 
+				data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].type == 'text' &&
+				data[i].children[0].data)
+				data_extract.size = data[i].children[0].data;
+			//Get torrent complete
+			if (data[i] && i == 13 && 
+				data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].type == 'text' &&
+				data[i].children[0].data)
+				data_extract.compl = data[i].children[0].data;
+			//Get torrent seed
+			if (data[i] && i == 15 && 
+				data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].type == 'text' &&
+				data[i].children[0].data)
+				data_extract.s = data[i].children[0].data;
+			//Get torrent leech
+			if (data[i] && i == 17 && 
+				data[i].children &&
+				data[i].children[0] &&
+				data[i].children[0].type == 'text' &&
+				data[i].children[0].data)
+				data_extract.l = data[i].children[0].data;
 		}
 
 	}
@@ -57,7 +89,7 @@ exports.search = function function_name(data, callback)
 {
 	var dom = cheerio.load(data.toString('utf8'));
 	var data_line = [];
-	dom('table[class="table table-striped"]').find('tbody > tr').each(function() {
+	dom('table[class="table"]').find('tbody > tr').each(function() {
 		data_line.push(get_data_on_line(this.children));
 	});
 	callback(data_line);
