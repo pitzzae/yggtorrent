@@ -36,6 +36,36 @@ const uri_action = {
 		path: '/user/login',
 		parsing: require('./parsing/auth').auth,
 		query_params: false
+	},
+	get_top_day: {
+		method: 'GET',
+		path: '/engine/ajax_top_query/day',
+		parsing: require('./parsing/top_query').parse_json,
+		query_params: false
+	},
+	get_top_week: {
+		method: 'GET',
+		path: '/engine/ajax_top_query/week',
+		parsing: require('./parsing/top_query').parse_json,
+		query_params: false
+	},
+	get_top_month: {
+		method: 'GET',
+		path: '/engine/ajax_top_query/month',
+		parsing: require('./parsing/top_query').parse_json,
+		query_params: false
+	},
+	get_mostseeded: {
+		method: 'POST',
+		path: '/engine/mostseeded',
+		parsing: require('./parsing/most_query').parse_json,
+		query_params: false
+	},
+	get_mostcompleted: {
+		method: 'POST',
+		path: '/engine/mostcompleted',
+		parsing: require('./parsing/most_query').parse_json,
+		query_params: false
 	}
 };
 
@@ -44,6 +74,20 @@ function Client() {
 		user: null,
 		password: null,
 	};
+	this.get('get_categories', '', (data) => {
+		fetch_url.categories_list = {};
+		for (var i = 0; i < data.length; i++)
+		{
+			if (data[i].cats)
+			{
+				for (var j = 0; j < data[i].cats.length; j++)
+				{
+					if (parseInt(data[i].cats[j].value) == data[i].cats[j].value)
+						fetch_url.categories_list[data[i].cats[j].value] = data[i].cats[j]['data-categorie'];
+				}
+			}
+		}
+	});
 }
 
 Client.prototype.set_credential = function(user, password)
@@ -96,19 +140,29 @@ Client.prototype.search = function(callback, search, category, subcategory)
 	this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&do=search&name=' + encodeURIComponent(search), callback);
 }
 
-Client.prototype.get_popular = function(callback, id)
+Client.prototype.get_top_day = function(callback)
 {
-	this.get('get_popular', 'category=' + id + '&per_page=100', callback);
+	this.get('get_top_day', '', callback);
 }
 
-Client.prototype.get_yesterday = function(callback, id)
+Client.prototype.get_top_week = function(callback)
 {
-	this.get('get_yesterday', 'category=' + id  + '&per_page=100', callback);
+	this.get('get_top_week', '', callback);
 }
 
-Client.prototype.get_today = function(callback, id)
+Client.prototype.get_top_month = function(callback)
 {
-	this.get('get_today', 'category=' + id + '&per_page=100', callback);
+	this.get('get_top_month', '', callback);
+}
+
+Client.prototype.get_mostseeded = function(callback)
+{
+	this.get('get_mostseeded', '', callback);
+}
+
+Client.prototype.get_mostcompleted = function(callback)
+{
+	this.get('get_mostcompleted', '', callback);
 }
 
 Client.prototype.get_torrent = function(callback, id)
@@ -161,6 +215,9 @@ function fetch_url(action, query, parsing, auth, callback)
 					action: auth.action,
 					query: auth.query
 				});
+			else if (action == 'search' || action == 'get_mostseeded' || action == 'get_mostcompleted' ||
+				action == 'get_top_day' || action == 'get_top_week' || action == 'get_top_month')
+				parsing(buffer, callback, fetch_url.categories_list);
 			else
 				parsing(buffer, callback);
 		});

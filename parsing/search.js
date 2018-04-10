@@ -1,8 +1,9 @@
 const cheerio = require('cheerio');
 
-function get_data_on_line(data)
+function get_data_on_line(data, categories_list)
 {
 	var data_extract = {
+		type_id: "",
 		type: "",
 		torrent: "",
 		id: null,
@@ -27,7 +28,10 @@ function get_data_on_line(data)
 				data[i].children[0].children[0].type == 'text' &&
 				data[i].children[0].next &&
 				data[i].children[0].next.name == 'a')
-				data_extract.type = data[i].children[0].children[0].data;
+			{
+				data_extract.type_id = data[i].children[0].children[0].data;
+				data_extract.type = categories_list[data_extract.type_id];
+			}
 			//Get torrent name
 			if (data[i].children &&
 				data[i].children[0] &&
@@ -85,12 +89,12 @@ function get_data_on_line(data)
 	return data_extract;
 }
 
-exports.search = function function_name(data, callback)
+exports.search = function function_name(data, callback, categories_list)
 {
 	var dom = cheerio.load(data.toString('utf8'));
 	var data_line = [];
 	dom('table[class="table"]').find('tbody > tr').each(function() {
-		data_line.push(get_data_on_line(this.children));
+		data_line.push(get_data_on_line(this.children, categories_list));
 	});
 	callback(data_line);
 }

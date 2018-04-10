@@ -52,6 +52,46 @@ client.get_torrent(function(buf, error) {
 		console.log(parsed);
 	}
 }, id);
+
+// get top day torrents
+client.get_top_day(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+
+// get top week torrents
+client.get_top_week(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+
+// get top month torrents
+client.get_top_month(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+
+// get most seeded torrents
+client.get_mostseeded(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+
+// get most completed torrents
+client.get_mostcompleted(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
 ```
 
 Categories Output
@@ -412,75 +452,350 @@ client.search(console.log, 'interstellar', '2139', '2148');
 ```json
 [
   {
-    "type": "2148",
-    "torrent": "hans zimmer - interstellar - Illuminated Star Projection Edition FLAC",
-    "id": "7344",
-    "compl": "134",
-    "age": "8 mois",
-    "size": "543.94MB",
-    "s": "7",
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Dunkerque 2017 Multi TrueFrench BluRay 1080p HDlight X264 AC3-mHDgz",
+    "id": "148799",
+    "compl": "49328",
+    "age": "3 mois",
+    "size": "2.78GB",
+    "s": "960",
+    "l": "21"
+  },
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Valérian et la Cité des mille planètes MULTI (VFI) 1080p HD-Light x264 AC3-ACOOL",
+    "id": "128845",
+    "compl": "43139",
+    "age": "4 mois",
+    "size": "3.54GB",
+    "s": "646",
+    "l": "4"
+  },
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Wind River 2017 Multi 1080p HDlight X264 AC3-mHDgz",
+    "id": "124601",
+    "compl": "41467",
+    "age": "4 mois",
+    "size": "1.87GB",
+    "s": "783",
+    "l": "8"
+  },
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Pirates des Caraibes : La Vengeance de Salazar (2017) VFF-ENG AC3-DTS BluRay 1080p x264.GHT (Pirates of the Caribbean : Dead Men Tell No Tales)",
+    "id": "96876",
+    "compl": "39273",
+    "age": "6 mois",
+    "size": "3.80GB",
+    "s": "514",
+    "l": "5"
+  },
+  ...
+]
+```
+
+Get top day torrent Output
+-----
+```javascript
+client.get_top_day(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+```
+```json
+[
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "Queen of the stone age : Rated R, FLAC 16bit 44100hz 1030Kbps",
+    "id": "224985",
+    "compl": "0",
+    "age": "19 minutes",
+    "size": "768.08MB",
+    "s": "1",
     "l": "0"
   },
   {
-    "type": "2148",
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "Curtis Knight and The Squires ft. J. Hendrix - You Cant Use My Name - The RSVP / PPX Sessions (2018) [FLAC - 16BITS - 44.1KHZ]",
+    "id": "224984",
+    "compl": "0",
+    "age": "33 minutes",
+    "size": "293.78MB",
+    "s": "1",
+    "l": "0"
+  },
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "[Mekanik Metal Disco] Sebkha-Chott_ - De l'Existence de la Mythologie Chottienne en 7 Cycles (2004) [MP3-320]",
+    "id": "224980",
+    "compl": "0",
+    "age": "39 minutes",
+    "size": "124.90MB",
+    "s": "1",
+    "l": "1"
+  },
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "[Mekanik Metal Disco] Sebkha-Chott_ - De l'Existence de la Mythologie Chottienne en 7 Cycles (2004) [FLAC-16]",
+    "id": "224979",
+    "compl": "0",
+    "age": "39 minutes",
+    "size": "386.06MB",
+    "s": "1",
+    "l": "0"
+  },
+  ...
+]
+```
+
+Get top week torrent Output
+-----
+```javascript
+client.get_top_week(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+```
+```json
+[
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Star.Wars.The.Last.Jedi.2017.MULTI.TRUEFRENCH.1080p.BluRay.Light.x264.AC3-ACOOL",
+    "id": "221851",
+    "compl": "4060",
+    "age": "6 jours",
+    "size": "3.71GB",
+    "s": "1566",
+    "l": "28"
+  },
+  {
+    "type_id": "2184",
+    "type": "Série TV",
+    "torrent": "The.Walking.Dead.S08E15.VOSTFR.720p.AMZN.WEB-DL.DD5.1.H264-ARK01",
+    "id": "224531",
+    "compl": "2707",
+    "age": "1 jour",
+    "size": "1.73GB",
+    "s": "1200",
+    "l": "14"
+  },
+  {
+    "type_id": "2184",
+    "type": "Série TV",
+    "torrent": "The.Walking.Dead.S08E14.VOSTFR.720p.AMZN.WEB-DL.DD5.1.H264-ARK01",
+    "id": "220944",
+    "compl": "3555",
+    "age": "8 jours",
+    "size": "1.60GB",
+    "s": "1100",
+    "l": "4"
+  },
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Dunkerque 2017 Multi TrueFrench BluRay 1080p HDlight X264 AC3-mHDgz",
+    "id": "148799",
+    "compl": "49330",
+    "age": "3 mois",
+    "size": "2.78GB",
+    "s": "984",
+    "l": "17"
+  },
+  ...
+]
+```
+
+Get top month torrent Output
+-----
+```javascript
+client.get_top_month(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+```
+```json
+[
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Star.Wars.The.Last.Jedi.2017.MULTI.TRUEFRENCH.1080p.BluRay.Light.x264.AC3-ACOOL",
+    "id": "221851",
+    "compl": "4060",
+    "age": "6 jours",
+    "size": "3.71GB",
+    "s": "1566",
+    "l": "28"
+  },
+  {
+    "type_id": "2184",
+    "type": "Série TV",
+    "torrent": "The.Walking.Dead.S08E15.VOSTFR.720p.AMZN.WEB-DL.DD5.1.H264-ARK01",
+    "id": "224531",
+    "compl": "2707",
+    "age": "1 jour",
+    "size": "1.73GB",
+    "s": "1200",
+    "l": "14"
+  },
+  {
+    "type_id": "2184",
+    "type": "Série TV",
+    "torrent": "The.Walking.Dead.S08E14.VOSTFR.720p.AMZN.WEB-DL.DD5.1.H264-ARK01",
+    "id": "220944",
+    "compl": "3555",
+    "age": "8 jours",
+    "size": "1.60GB",
+    "s": "1100",
+    "l": "4"
+  },
+  {
+    "type_id": "2183",
+    "type": "Film",
+    "torrent": "Dunkerque 2017 Multi TrueFrench BluRay 1080p HDlight X264 AC3-mHDgz",
+    "id": "148799",
+    "compl": "49330",
+    "age": "3 mois",
+    "size": "2.78GB",
+    "s": "984",
+    "l": "17"
+  },
+  ...
+]
+```
+
+Get most seeded torrent Output
+-----
+```javascript
+client.get_mostseeded(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+```
+```json
+[
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "hans zimmer - interstellar - Illuminated Star Projection Edition FLAC",
+    "id": "7344",
+    "compl": "135",
+    "age": "9 mois",
+    "size": "543.94MB",
+    "s": "2",
+    "l": "0"
+  },
+  {
+    "type_id": "2148",
+    "type": "Musique",
     "torrent": "(Soundtrack) Hans Zimmer - Interstellar (Version Vinyl) [FLAC - 24 bits] 2015",
     "id": "116948",
     "compl": "0",
     "age": "5 mois",
     "size": "1.35GB",
     "s": "0",
-    "l": "6"
+    "l": "0"
   },
   {
-    "type": "2148",
+    "type_id": "2148",
+    "type": "Musique",
     "torrent": "[RE-UP] (Soundtrack) Hans Zimmer - Interstellar (Version Vinyl) [FLAC - 24 bits] 2015",
     "id": "118924",
-    "compl": "302",
-    "age": "4 mois",
+    "compl": "305",
+    "age": "5 mois",
     "size": "1.35GB",
-    "s": "24",
+    "s": "4",
     "l": "0"
   },
   {
-    "type": "2148",
+    "type_id": "2148",
+    "type": "Musique",
     "torrent": "Hans Zimmer - Interstellar OST (Deluxe) 2014",
     "id": "39458",
-    "compl": "309",
+    "compl": "317",
     "age": "8 mois",
     "size": "225.08MB",
-    "s": "16",
+    "s": "2",
     "l": "0"
   },
+  ...
+]
+```
+
+Get most completed torrent Output
+-----
+```javascript
+client.get_mostcompleted(function(result, error) {
+	if (error)
+		console.log(error);
+	else
+		console.log(result);
+});
+```
+```json
+[
   {
-    "type": "2148",
-    "torrent": "Hans.Zimmer-Interstellar.(Original.Motion.Picture.Soundtrack)-CD-FLAC-2014-RaM",
-    "id": "106558",
-    "compl": "170",
-    "age": "5 mois",
-    "size": "290.64MB",
-    "s": "11",
-    "l": "0"
-  },
-  {
-    "type": "2148",
-    "torrent": "PINK FLOYD-Interstellar Encore-1970-flac",
-    "id": "187159",
-    "compl": "0",
-    "age": "1 mois",
-    "size": "658.02MB",
-    "s": "0",
+    "type_id": "2147",
+    "type": "Karaoké",
+    "torrent": "[KARAOKE]KARAOKE LETTRE M (128kbps)",
+    "id": "222151",
+    "compl": "67",
+    "age": "5 jours",
+    "size": "1.66GB",
+    "s": "23",
     "l": "3"
   },
   {
-    "type": "2148",
-    "torrent": "John Coltrane - Interstellar Space - 1967 - MP3 193Kbps",
-    "id": "104593",
-    "compl": "0",
-    "age": "5 mois",
-    "size": "74.40MB",
-    "s": "4",
+    "type_id": "2147",
+    "type": "Karaoké",
+    "torrent": "[KARAOKE]KARAOKE LETTRE L (128kbps)",
+    "id": "222145",
+    "compl": "54",
+    "age": "5 jours",
+    "size": "5.85GB",
+    "s": "22",
+    "l": "2"
+  },
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "Jimi Hendrix - Ultra Rare Trax-   1994-MP3-320kbps",
+    "id": "224570",
+    "compl": "45",
+    "age": "1 jour",
+    "size": "175.06MB",
+    "s": "30",
     "l": "0"
-  }
+  },
+  {
+    "type_id": "2148",
+    "type": "Musique",
+    "torrent": "[Mp3 320Kbps] Gilbert Becaud  (Best of Coffret 3 CD) 2009 (remasterisé)",
+    "id": "224562",
+    "compl": "46",
+    "age": "1 jour",
+    "size": "403.76MB",
+    "s": "27",
+    "l": "1"
+  },
+  ...
 ]
 ```
 
