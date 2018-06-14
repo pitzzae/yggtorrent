@@ -1,5 +1,5 @@
 const https = require('https');
-const API_HOST = 'yggtorrent.is';
+const API_HOST = 'ww1.yggtorrent.is';
 const uri_action = {
 	get_categories: {
 		method: 'GET',
