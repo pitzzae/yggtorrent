@@ -1,5 +1,4 @@
 const https = require('https');
-const API_HOST = 'ww1.yggtorrent.is';
 const uri_action = {
 	get_categories: {
 		method: 'GET',
@@ -69,11 +68,12 @@ const uri_action = {
 	}
 };
 
-function Client() {
+function Client(API_HOST) {
 	this.credential = {
 		user: null,
 		password: null,
 	};
+	fetch_url.API_HOST = API_HOST || 'yggtorrent.is';
 	this.get('get_categories', '', (data) => {
 		fetch_url.categories_list = {};
 		for (var i = 0; i < data.length; i++)
@@ -90,7 +90,7 @@ function Client() {
 	});
 }
 
-Client.prototype.set_credential = function(user, password)
+Client.prototype.set_credential = function(user, password, API_HOST)
 {
 	fetch_url.credential = {
 		user: user,
@@ -173,12 +173,12 @@ Client.prototype.get_torrent = function(callback, id)
 function fetch_url(action, query, parsing, auth, callback)
 {
 	var headers = {
-		hostname: API_HOST,
+		hostname: fetch_url.API_HOST,
 		port: 443,
 		path: uri_action[action].path + (uri_action[action].query_params ? query : ''),
 		method: uri_action[action].method,
 		headers: {
-			'Host': API_HOST,
+			'Host': fetch_url.API_HOST,
 			'Content-Length': Buffer.byteLength(uri_action[action].query_params ? '' : query, 'utf8'),
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 		}
@@ -199,27 +199,37 @@ function fetch_url(action, query, parsing, auth, callback)
 		});
 		res.on('end', (d) => {
 			var buffer = Buffer.concat(data_res);
-			if (action == 'get_torrent')
-				parsing(buffer, callback, {
-					uri_action: uri_action,
-					fetch_url: fetch_url,
-					session: res.headers['set-cookie'],
-					action: action,
-					query: query
-				});
-			else if (action == 'auth')
-				parsing(buffer, callback, {
-					uri_action: auth.uri_action,
-					fetch_url: auth.fetch_url,
-					session: auth.session,
-					action: auth.action,
-					query: auth.query
-				});
-			else if (action == 'search' || action == 'get_mostseeded' || action == 'get_mostcompleted' ||
-				action == 'get_top_day' || action == 'get_top_week' || action == 'get_top_month')
-				parsing(buffer, callback, fetch_url.categories_list);
+			if (res.statusCode == 301)
+			{
+				var split_location = res.headers.location.split('/');
+				fetch_url.API_HOST = split_location[2];
+				fetch_url(action, query, parsing, auth, callback);
+			}
 			else
-				parsing(buffer, callback);
+			{
+				if (action == 'get_torrent')
+					parsing(buffer, callback, {
+						uri_action: uri_action,
+						fetch_url: fetch_url,
+						session: res.headers['set-cookie'],
+						action: action,
+						query: query
+					});
+				else if (action == 'auth')
+					parsing(buffer, callback, {
+						uri_action: auth.uri_action,
+						fetch_url: auth.fetch_url,
+						session: auth.session,
+						action: auth.action,
+						query: auth.query
+					});
+				else if (action == 'search' || action == 'get_mostseeded' || action == 'get_mostcompleted' ||
+					action == 'get_top_day' || action == 'get_top_week' || action == 'get_top_month')
+					parsing(buffer, callback, fetch_url.categories_list);
+				else
+					parsing(buffer, callback);
+			}
+			
 		});
 	});
 	req.on('error', (e) => {
