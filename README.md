@@ -37,8 +37,8 @@ client.get_info(function(result) {
 }, id);
 
 // search torrents
-client.search(function(result) {
-	console.log(result);
+client.search(function(result, page) {
+	console.log(result, page);
 }, 'interstellar');
 
 // download and parse a .torrent
@@ -497,6 +497,10 @@ client.search(console.log, 'interstellar', '2139', '2148');
   },
   ...
 ]
+{
+  "page_count": 1,
+  "page_lenght": 50
+}
 ```
 
 Get top day torrent Output

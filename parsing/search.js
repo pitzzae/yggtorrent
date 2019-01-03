@@ -89,12 +89,29 @@ function get_data_on_line(data, categories_list)
 	return data_extract;
 }
 
+function get_max_page(data_page)
+{
+	if (data_page && data_page.attribs && data_page.attribs['data-ci-pagination-page'])
+		return parseInt(data_page.attribs['data-ci-pagination-page']);
+	else
+		return 1
+}
+
 exports.search = function function_name(data, callback, categories_list)
 {
 	var dom = cheerio.load(data.toString('utf8'));
 	var data_line = [];
+	var page = {
+		page_count: 0,
+		page_lenght: 50
+	};
 	dom('table[class="table"]').find('tbody > tr').each(function() {
 		data_line.push(get_data_on_line(this.children, categories_list));
 	});
-	callback(data_line);
+	if (data_line.length > 0)
+		page.page_count = 1;
+	dom('ul[class="pagination"]').find('ul > li > a').each(function() {
+		page.page_count = get_max_page(this);
+	});
+	callback(data_line, page);
 }
