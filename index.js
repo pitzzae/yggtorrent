@@ -133,11 +133,12 @@ Client.prototype.get_info = function(callback, id)
 	this.get('get_info', id + '-x', callback);
 }
 
-Client.prototype.search = function(callback, search, category, subcategory)
+Client.prototype.search = function(callback, search, category, subcategory, page)
 {
-	var category_tmp = category ? category : 'all';
-	var subcategory_tmp = subcategory ? subcategory : 'all';
-	this.get('search', 'category=' + category_tmp + '&sub_category=' + subcategory_tmp + '&do=search&name=' + encodeURIComponent(search), callback);
+    var category_tmp = category ? category : 'all';
+    var subcategory_tmp = subcategory ? subcategory : 'all';
+    var page_tmp = page ? page : '0';
+    this.get('search', 'category=' + category_tmp + '&subcategory=' + subcategory_tmp + '&do=search&name=' + encodeURIComponent(search) + '&page=' + page_tmp, callback);
 }
 
 Client.prototype.get_top_day = function(callback)
