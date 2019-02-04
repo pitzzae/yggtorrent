@@ -73,7 +73,7 @@ function Client(API_HOST) {
 		user: null,
 		password: null,
 	};
-	fetch_url.API_HOST = API_HOST || 'yggtorrent.is';
+	fetch_url.API_HOST = API_HOST || 'yggtorrent.gg';
 	this.get('get_categories', '', (data) => {
 		fetch_url.categories_list = {};
 		for (var i = 0; i < data.length; i++)
