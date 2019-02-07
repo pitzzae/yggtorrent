@@ -72,31 +72,43 @@ function Client(API_HOST) {
 	this.credential = {
 		user: null,
 		password: null,
+		cf_clearance: null,
+		cf_clearance_expiry: null
 	};
-	fetch_url.API_HOST = API_HOST || 'yggtorrent.gg';
-	this.get('get_categories', '', (data) => {
-		fetch_url.categories_list = {};
-		for (var i = 0; i < data.length; i++)
-		{
-			if (data[i].cats)
-			{
-				for (var j = 0; j < data[i].cats.length; j++)
-				{
-					if (parseInt(data[i].cats[j].value) == data[i].cats[j].value)
-						fetch_url.categories_list[data[i].cats[j].value] = data[i].cats[j]['data-categorie'];
-				}
-			}
-		}
-	});
+	fetch_url.API_HOST = API_HOST || 'www2.yggtorrent.gg';
 }
 
 Client.prototype.set_credential = function(user, password, API_HOST)
 {
+	let sync = true;
 	fetch_url.credential = {
 		user: user,
 		password: password,
 		count: 0
 	};
+	fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
+	.then(() => {
+		this.get('get_categories', '', (data) => {
+			fetch_url.categories_list = {};
+			for (var i = 0; i < data.length; i++)
+			{
+				if (data[i].cats)
+				{
+					for (var j = 0; j < data[i].cats.length; j++)
+					{
+						if (parseInt(data[i].cats[j].value) == data[i].cats[j].value)
+							fetch_url.categories_list[data[i].cats[j].value] = data[i].cats[j]['data-categorie'];
+					}
+				}
+			}
+			sync = false;
+		});
+	})
+	.catch(err => {
+		console.log(err);
+	});
+	while(sync) {require('deasync').sleep(100);}
+    return;
 }
 
 Client.prototype.get = function(action, query, callback)
@@ -171,6 +183,51 @@ Client.prototype.get_torrent = function(callback, id)
 	this.get('get_torrent', 'id=' + id, callback);
 }
 
+async function fetch_cf_clearance(url) {
+	return new Promise((resolve) => {
+		const phantom = require('phantom');
+		phantom.create().then(instance => {
+			instance.createPage().then(page => {
+				let count = 0;
+				page.setting('userAgent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0')
+				page.on('onResourceRequested', function(requestData) {
+					count++;
+				});
+				page.on('onLoadFinished', function(requestData) {
+					if (count > 1)
+					{
+						page.property('cookies').then(cookies => {
+							instance.exit();
+							cookies.forEach(e => {
+								if (e.name === 'cf_clearance')
+								{
+									fetch_url.credential.cf_clearance = e.value;
+									fetch_url.credential.cf_clearance_expiry = e.expiry;
+								}
+							});
+							resolve();
+							/*
+							cookies.forEach(e => {
+								if (e.name === 'cf_clearance')
+								{
+									let timeout = (e.expiry * 1000) - (new Date().getTime());
+									fetch_url.credential.cf_clearance = e.value;
+									fetch_url.credential.cf_clearance_expiry = e.expiry;
+									setTimeout(() => {
+										fetch_cf_clearance(url);
+									}, timeout - 180000);
+								}
+							});
+							*/
+						});
+					}
+				});
+				page.open(url);
+			});
+		});
+	});
+};
+
 function fetch_url(action, query, parsing, auth, callback)
 {
 	var headers = {
@@ -181,7 +238,9 @@ function fetch_url(action, query, parsing, auth, callback)
 		headers: {
 			'Host': fetch_url.API_HOST,
 			'Content-Length': Buffer.byteLength(uri_action[action].query_params ? '' : query, 'utf8'),
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0',
+			'Cookie': `cf_clearance=${fetch_url.credential.cf_clearance}`
 		}
 	};
 	if (auth && auth.session && this.fetch_url)
@@ -200,11 +259,21 @@ function fetch_url(action, query, parsing, auth, callback)
 		});
 		res.on('end', (d) => {
 			var buffer = Buffer.concat(data_res);
-			if (res.statusCode == 301)
+			if (res.statusCode === 301)
 			{
 				var split_location = res.headers.location.split('/');
 				fetch_url.API_HOST = split_location[2];
 				fetch_url(action, query, parsing, auth, callback);
+			}
+			if (res.statusCode === 503)
+			{
+				fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
+				.then(() => {
+					fetch_url(action, query, parsing, auth, callback)
+				})
+				.catch(err => {
+					fetch_url(action, query, parsing, auth, callback)
+				});
 			}
 			else
 			{
