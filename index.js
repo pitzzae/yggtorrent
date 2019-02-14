@@ -84,7 +84,8 @@ Client.prototype.set_credential = function(user, password, API_HOST)
 	fetch_url.credential = {
 		user: user,
 		password: password,
-		count: 0
+		count: 0,
+		yggp_: null
 	};
 	fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
 	.then(() => {
@@ -243,6 +244,8 @@ function fetch_url(action, query, parsing, auth, callback)
 			'Cookie': `cf_clearance=${fetch_url.credential.cf_clearance}`
 		}
 	};
+	if (fetch_url.credential.yggp_)
+		headers.headers['Cookie'] += `; yggp_=${fetch_url.credential.yggp_}`
 	if (auth && auth.session && this.fetch_url)
 	{
 		if (action ===  'auth')
@@ -265,7 +268,21 @@ function fetch_url(action, query, parsing, auth, callback)
 				fetch_url.API_HOST = split_location[2];
 				fetch_url(action, query, parsing, auth, callback);
 			}
-			if (res.statusCode === 503)
+			else if (res.statusCode === 307)
+			{
+				if (res.headers['set-cookie'])
+				{
+					res.headers['set-cookie'].forEach(c => {
+						let yggp;
+						if (c.match(/ygg/g) && (yggp_ = c.match(/=[a-z0-9]+/)) && yggp_ && yggp_[0])
+						{
+							fetch_url.credential.yggp_ = yggp_[0].replace('=', '');
+						}
+					});
+				}
+				fetch_url(action, query, parsing, auth, callback);
+			}
+			else if (res.statusCode === 503)
 			{
 				fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
 				.then(() => {
