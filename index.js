@@ -1,4 +1,4 @@
-const https = require('https');
+const request = require('request');
 const uri_action = {
 	get_categories: {
 		method: 'GET',
@@ -72,8 +72,7 @@ function Client(API_HOST) {
 	this.credential = {
 		user: null,
 		password: null,
-		cf_clearance: null,
-		cf_clearance_expiry: null
+		cookies: []
 	};
 	fetch_url.API_HOST = API_HOST || 'www2.yggtorrent.gg';
 }
@@ -190,7 +189,7 @@ async function fetch_cf_clearance(url) {
 		phantom.create().then(instance => {
 			instance.createPage().then(page => {
 				let count = 0;
-				page.setting('userAgent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0')
+				page.setting('userAgent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:66.0) Gecko/20100101 Firefox/66.0')
 				page.on('onResourceRequested', function(requestData) {
 					count++;
 				});
@@ -199,12 +198,9 @@ async function fetch_cf_clearance(url) {
 					{
 						page.property('cookies').then(cookies => {
 							instance.exit();
+							fetch_url.credential.cookies = [];
 							cookies.forEach(e => {
-								if (e.name === 'cf_clearance')
-								{
-									fetch_url.credential.cf_clearance = e.value;
-									fetch_url.credential.cf_clearance_expiry = e.expiry;
-								}
+								fetch_url.credential.cookies.push(`${e.name}=${e.value}`);
 							});
 							resolve();
 							/*
@@ -231,99 +227,83 @@ async function fetch_cf_clearance(url) {
 
 function fetch_url(action, query, parsing, auth, callback)
 {
-	var headers = {
-		hostname: fetch_url.API_HOST,
-		port: 443,
-		path: uri_action[action].path + (uri_action[action].query_params ? query : ''),
+	const options = {
+		url: `https://${fetch_url.API_HOST}${uri_action[action].path}${(uri_action[action].query_params ? query : '')}`,
 		method: uri_action[action].method,
 		headers: {
 			'Host': fetch_url.API_HOST,
-			'Content-Length': Buffer.byteLength(uri_action[action].query_params ? '' : query, 'utf8'),
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0',
-			'Cookie': `cf_clearance=${fetch_url.credential.cf_clearance}`
-		}
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:66.0) Gecko/20100101 Firefox/66.0',
+			'Cookie': `${fetch_url.credential.cookies.join('; ')}`
+		},
+		encoding: null
 	};
-	if (fetch_url.credential.yggp_)
-		headers.headers['Cookie'] += `; yggp_=${fetch_url.credential.yggp_}`
-	if (auth && auth.session && this.fetch_url)
+	if (action === 'auth')
+		options.formData = {
+			id: this.fetch_url.credential.user,
+			pass: this.fetch_url.credential.password
+		};
+	else
 	{
-		if (action ===  'auth')
-		{
-			query = "id="+this.fetch_url.credential.user+"&pass="+this.fetch_url.credential.password+"&bGodkend=";
-			headers.headers['Content-Length'] = Buffer.byteLength(query);
-		}
-		headers.headers['Cookie'] = auth.session;
+		options.body = uri_action[action].query_params ? '' : query;
+		options.headers['Content-Length'] = Buffer.byteLength(uri_action[action].query_params ? '' : query, 'utf8')
 	}
-	var data_res = [];
-	var req = https.request(headers, (res) => {
-		res.on('data', (d) => {
-			data_res.push(d);
-		});
-		res.on('end', (d) => {
-			var buffer = Buffer.concat(data_res);
-			if (res.statusCode === 301)
+	request.post(options, function optionalCallback(err, res, buffer) {
+		if (res.statusCode === 301)
+		{
+			var split_location = res.headers.location.split('/');
+			fetch_url.API_HOST = split_location[2];
+			fetch_url(action, query, parsing, auth, callback);
+		}
+		else if (res.statusCode === 307)
+		{
+			if (res.headers['set-cookie'])
 			{
-				var split_location = res.headers.location.split('/');
-				fetch_url.API_HOST = split_location[2];
-				fetch_url(action, query, parsing, auth, callback);
-			}
-			else if (res.statusCode === 307)
-			{
-				if (res.headers['set-cookie'])
-				{
-					res.headers['set-cookie'].forEach(c => {
-						let yggp;
-						if (c.match(/ygg/g) && (yggp_ = c.match(/=[a-z0-9]+/)) && yggp_ && yggp_[0])
-						{
-							fetch_url.credential.yggp_ = yggp_[0].replace('=', '');
-						}
-					});
-				}
-				fetch_url(action, query, parsing, auth, callback);
-			}
-			else if (res.statusCode === 503)
-			{
-				fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
-				.then(() => {
-					fetch_url(action, query, parsing, auth, callback)
-				})
-				.catch(err => {
-					fetch_url(action, query, parsing, auth, callback)
+				res.headers['set-cookie'].forEach(c => {
+					let yggp;
+					if (c.match(/ygg/g) && (yggp_ = c.match(/=[a-z0-9]+/)) && yggp_ && yggp_[0])
+					{
+						fetch_url.credential.yggp_ = yggp_[0].replace('=', '');
+					}
 				});
 			}
+			fetch_url(action, query, parsing, auth, callback);
+		}
+		else if (res.statusCode === 503)
+		{
+			fetch_cf_clearance(`https://${fetch_url.API_HOST}${uri_action.search.path}`)
+			.then(() => {
+				fetch_url(action, query, parsing, auth, callback)
+			})
+			.catch(err => {
+				fetch_url(action, query, parsing, auth, callback)
+			});
+		}
+		else
+		{
+			if (action == 'get_torrent')
+				parsing(buffer, callback, {
+					uri_action: uri_action,
+					fetch_url: fetch_url,
+					session: res.headers['set-cookie'],
+					action: action,
+					query: query
+				});
+			else if (action == 'auth')
+				parsing(buffer, callback, {
+					uri_action: auth.uri_action,
+					fetch_url: auth.fetch_url,
+					session: auth.session,
+					action: auth.action,
+					query: auth.query
+				});
+			else if (action == 'search' || action == 'get_mostseeded' || action == 'get_mostcompleted' ||
+				action == 'get_top_day' || action == 'get_top_week' || action == 'get_top_month')
+				parsing(buffer, callback, fetch_url.categories_list);
 			else
-			{
-				if (action == 'get_torrent')
-					parsing(buffer, callback, {
-						uri_action: uri_action,
-						fetch_url: fetch_url,
-						session: res.headers['set-cookie'],
-						action: action,
-						query: query
-					});
-				else if (action == 'auth')
-					parsing(buffer, callback, {
-						uri_action: auth.uri_action,
-						fetch_url: auth.fetch_url,
-						session: auth.session,
-						action: auth.action,
-						query: auth.query
-					});
-				else if (action == 'search' || action == 'get_mostseeded' || action == 'get_mostcompleted' ||
-					action == 'get_top_day' || action == 'get_top_week' || action == 'get_top_month')
-					parsing(buffer, callback, fetch_url.categories_list);
-				else
-					parsing(buffer, callback);
-			}
-			
-		});
+				parsing(buffer, callback);
+		}
 	});
-	req.on('error', (e) => {
-		console.error(e);
-	});
-	req.write(uri_action[action].query_params ? '' : query);
-	req.end();
 }
 
 module.exports = Client;
