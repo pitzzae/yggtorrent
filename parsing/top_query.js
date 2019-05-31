@@ -2,7 +2,7 @@ function extract_data(data, result, categories_list) {
 	for (var key in data)
 	{
 		data[key].forEach((e) => {
-			if (categories_list[e[0].replace(/<div class="hidden">|<([\x00-\xff])+/g, '')])
+			if (e[0] && categories_list[e[0].replace(/<div class="hidden">|<([\x00-\xff])+/g, '')])
 				result.push({
 					type_id: e[0].replace(/<div class="hidden">|<([\x00-\xff])+/g, ''),
 					type: categories_list[e[0].replace(/<div class="hidden">|<([\x00-\xff])+/g, '')],
