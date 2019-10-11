@@ -74,7 +74,7 @@ function Client(API_HOST) {
 		password: null,
 		cookies: []
 	};
-	fetch_url.API_HOST = API_HOST || 'www2.yggtorrent.gg';
+	fetch_url.API_HOST = API_HOST || 'www2.yggtorrent.pe';
 }
 
 Client.prototype.set_credential = function(user, password, API_HOST)
