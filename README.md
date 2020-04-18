@@ -2,7 +2,7 @@ Yggtorrent
 ====
 ### Yggtorrent Web crawler client
 
-A crawler client for the [Yggtorrent V3.0 website](https://yggtorrent.pe) that works in node
+A crawler client for the [Yggtorrent V3.0 website](https://yggtorrent.pe) that works in node@8
 
 Install
 -------
